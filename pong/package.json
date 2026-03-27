@@ -1,14 +1,17 @@
 {
   "name": "pong",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Centrera Pong – TypeScript canvas game",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "serve -s . -l tcp://0.0.0.0:3000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.4"
+  },
   "devDependencies": {
     "typescript": "^6.0.2"
   }
