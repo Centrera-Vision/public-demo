@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubernetes Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1A1A1A;
+      background: #FFFFFF;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    :root {
+      --orange: #E8572A;
+      --red: #E8184A;
+      --magenta: #D4167A;
+      --gradient: linear-gradient(135deg, #E8572A, #E8184A, #D4167A);
+      --gradient-h: linear-gradient(90deg, #E8572A, #E8184A, #D4167A);
+      --bg: #FFFFFF;
+      --bg-light: #F8F9FA;
+      --text: #1A1A1A;
+      --text-secondary: #5A6C7D;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.10);
+      --max-w: 1100px;
+      --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    .gradient-text {
+      background: var(--gradient-h);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      background: var(--gradient);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 15% 85%, rgba(255,255,255,0.10) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.07) 0%, transparent 45%);
+    }
+    /* Floating blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      animation: float 8s ease-in-out infinite;
+    }
+    .blob-1 { width: 420px; height: 420px; top: -80px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 280px; height: 280px; bottom: -60px; right: -60px; animation-delay: 3s; }
+    .blob-3 { width: 180px; height: 180px; top: 40%; right: 10%; animation-delay: 5s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50%       { transform: translateY(-24px) scale(1.04); }
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 780px;
+      padding: 40px 24px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+    .hero-badge .dot {
+      width: 8px; height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(1.3); }
+    }
+    .hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: rgba(255,255,255,0.82);
+      max-width: 560px;
+      margin: 0 auto 40px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--orange);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .btn-white:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.22); transform: translateY(-2px); }
+    .btn-outline-white {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.12); }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--bg-light);
+      padding: 40px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+    .stat-item {}
+    .stat-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: var(--gradient-h);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* SECTION */
+    .section { padding: 100px 0; }
+    .section-light { background: var(--bg-light); }
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 56px;
+    }
+    .section-center { text-align: center; }
+    .section-center .section-subtitle { margin-left: auto; margin-right: auto; }
+
+    /* CARDS grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: var(--transition);
+    }
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* Command block */
+    .cmd-block {
+      background: #0F1419;
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cmd-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gradient-h);
+    }
+    .cmd-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #5A6C7D;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .cmd-block code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.92rem;
+      color: #E2E8F0;
+      line-height: 1.9;
+      display: block;
+    }
+    .cmd-block code .prompt { color: var(--orange); }
+    .cmd-block code .flag   { color: #93C5FD; }
+    .cmd-block code .value  { color: #86EFAC; }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 24px;
+      position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 27px; top: 56px;
+      bottom: -24px;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(232,87,42,0.3), rgba(212,22,122,0.1));
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(232,87,42,0.35);
+    }
+    .step-body {
+      padding: 8px 0 40px;
+    }
+    .step-body h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .step-body p {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    /* Architecture diagram */
+    .arch-box {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .arch-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-light);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      min-width: 100px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .arch-node:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .arch-node .arch-icon { font-size: 1.6rem; }
+    .arch-node.highlight {
+      background: var(--gradient);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 6px 24px rgba(232,87,42,0.35);
+    }
+    .arch-arrow {
+      font-size: 1.4rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+    .arch-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .arch-divider::before, .arch-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0,0,0,0.08);
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--gradient);
+      padding: 80px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    }
+    .cta-section h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.1rem;
+      position: relative;
+      margin-bottom: 36px;
+    }
+
+    /* Reveal */
+    /* Logo */
+    .logo { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 24px; }
+    .logo svg { width: 40px; height: 40px; stroke: rgba(255,255,255,0.9); }
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: #fff;
+    }
+    .footer-logo svg { width: 28px; height: 28px; stroke: var(--orange); }
+    .footer-logo .logo-text { color: rgba(255,255,255,0.8); font-size: 1.1rem; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Footer */
+    .footer {
+      background: #0F1419;
+      color: rgba(255,255,255,0.6);
+      padding: 40px 0;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+    .footer span { color: var(--orange); }
+
+    @media (max-width: 640px) {
+      .hero-actions { flex-direction: column; align-items: center; }
+      .arch-row { gap: 8px; }
+      .arch-node { min-width: 80px; padding: 12px 14px; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-content">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+        </svg>
+        <span class="logo-text">CENTRERA</span>
+      </div>
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Live · Kubernetes Demo
+      </div>
+      <h1>Välkommen till<br>Kubernetes i Praktiken</h1>
+      <p>Den här sidan serveras av nginx i ett Kubernetes-kluster – exponerad via en LoadBalancer-tjänst och konfigurerad med ConfigMap.</p>
+      <div class="hero-actions">
+        <a href="#how-it-works" class="btn btn-white">Hur det fungerar ↓</a>
+        <a href="#commands" class="btn btn-outline-white">Se kommandona</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">6</div>
+          <div class="stat-label">kubectl-kommandon</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1</div>
+          <div class="stat-label">ConfigMap</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1</div>
+          <div class="stat-label">Deployment</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">∞</div>
+          <div class="stat-label">Skalbarhet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="reveal section-center">
+        <h2 class="section-title">Vad händer under huven?</h2>
+        <p class="section-subtitle">Tre resurser samverkar för att servera denna sida i klustret.</p>
+      </div>
+      <div class="arch-box reveal">
+        <div class="arch-row">
+          <div class="arch-node">
+            <span class="arch-icon">🌐</span>
+            Webbläsare
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node highlight">
+            <span class="arch-icon">⚖️</span>
+            LoadBalancer<br>Service
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
+            <span class="arch-icon">🚀</span>
+            nginx Pod
+          </div>
+        </div>
+        <div class="arch-divider">Konfiguration</div>
+        <div class="arch-row">
+          <div class="arch-node">
+            <span class="arch-icon">🗂️</span>
+            ConfigMap<br><small style="font-weight:400;color:#5A6C7D">index.html</small>
+          </div>
+          <span class="arch-arrow">→ mountad i →</span>
+          <div class="arch-node">
+            <span class="arch-icon">📂</span>
+            /usr/share/<br>nginx/html
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section class="section section-light" id="commands">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Steg-för-steg</h2>
+        <p class="section-subtitle">Fyra kommandon från noll till en snygg webbsida i Kubernetes.</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Skapa Deployment</h3>
+            <p>Startar en nginx-pod i namespace <em>demo</em>.</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl create deployment nginx <span class="flag">--image</span>=<span class="value">nginx</span> <span class="flag">-n</span> <span class="value">demo</span></code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Exponera med LoadBalancer</h3>
+            <p>Skapar en extern IP via molnleverantörens load balancer.</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl expose deployment nginx \<br>
+&nbsp;&nbsp;<span class="flag">--type</span>=<span class="value">LoadBalancer</span> \<br>
+&nbsp;&nbsp;<span class="flag">--port</span>=<span class="value">80</span> \<br>
+&nbsp;&nbsp;<span class="flag">--target-port</span>=<span class="value">80</span> \<br>
+&nbsp;&nbsp;<span class="flag">-n</span> <span class="value">demo</span></code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Skapa ConfigMap från index.html</h3>
+            <p>Läser in din lokala <em>index.html</em> direkt som en Kubernetes-resurs – ingen YAML behövs.</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl create configmap nginx-html \<br>
+&nbsp;&nbsp;<span class="flag">--from-file</span>=<span class="value">index.html=index.html</span> \<br>
+&nbsp;&nbsp;<span class="flag">-n</span> <span class="value">demo</span></code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Patcha Deployment att mounta ConfigMap</h3>
+            <p>Mountar ConfigMap:en till nginx:s HTML-katalog. Allt inline – ingen extra fil behövs.</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl patch deployment nginx <span class="flag">-n</span> <span class="value">demo</span> <span class="flag">--patch</span> <span class="value">'
+spec:
+  template:
+    spec:
+      containers:
+      - name: nginx
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: nginx-html'</span></code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>Kontrollera att det rullar ut OK</h3>
+            <p>Väntar tills den nya pod:en är uppe och redo.</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl rollout status deployment nginx <span class="flag">-n</span> <span class="value">demo</span></code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h3>Hämta extern IP</h3>
+            <p>När <em>EXTERNAL-IP</em> dyker upp är sidan live – öppna den i webbläsaren!</p>
+            <div class="cmd-block">
+              <div class="cmd-label">Terminal</div>
+              <code><span class="prompt">$</span> kubectl get service nginx <span class="flag">-n</span> <span class="value">demo</span></code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="section">
+    <div class="container">
+      <div class="reveal section-center">
+        <h2 class="section-title">Varför ConfigMap?</h2>
+        <p class="section-subtitle">Det enklaste sättet att anpassa statisk webbinnehåll utan att bygga egna images.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card reveal">
+          <div class="card-icon">⚡</div>
+          <h3>Snabb uppdatering</h3>
+          <p>Ändra innehållet med <code>kubectl edit</code> och en <code>rollout restart</code> – inga pipelines, inga registries.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🔒</div>
+          <h3>Ingen extern beroende</h3>
+          <p>HTML lagras direkt i klustret som en Kubernetes-resurs. Inget behov av extern fillagring.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">📦</div>
+          <h3>Standard nginx-image</h3>
+          <p>Du använder officiel nginx-image utan modifikationer. Lättare att hålla uppdaterad och säker.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🔁</div>
+          <h3>GitOps-vänligt</h3>
+          <p>ConfigMap är en vanlig YAML-fil som versionshantering i Git precis som all annan infrastruktur.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Redo att bygga vidare?</h2>
+      <p>Nästa steg: Ingress, TLS-certifikat och Helm-charts.</p>
+      <a href="#how-it-works" class="btn btn-white">Tillbaka till toppen ↑</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="logo footer-logo" style="margin-bottom:12px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+        </svg>
+        <span class="logo-text">CENTRERA</span>
+      </div>
+      Kubernetes Demo · Serveras av <span>nginx</span> i ett K8s-kluster · Konfigurerad med ConfigMap
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const els = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function(el) { obs.observe(el); });
+      } else {
+        els.forEach(function(el) { el.classList.add('visible'); });
+      }
+    })();
+  </script>
+</body>
+</html>
