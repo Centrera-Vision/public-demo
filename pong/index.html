@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CENTRERA Pong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header class="header">
+      <div class="logo">
+        <span id="logo-container"></span>
+        <span class="logo-text">CENTRERA</span>
+      </div>
+      <span class="header-title">PONG</span>
+    </header>
+
+    <main class="game-area">
+      <canvas id="pong-canvas"></canvas>
+    </main>
+
+    <footer class="controls">
+      <div class="control-info">
+        <span class="key">W</span><span class="key">S</span> Vänster
+        &nbsp;·&nbsp;
+        <span class="key">↑</span><span class="key">↓</span> Höger
+        &nbsp;·&nbsp;
+        <span class="key">R</span> Omstart
+      </div>
+      <button id="reset-btn" class="btn-reset">Ny match</button>
+    </footer>
+  </div>
+
+  <script type="module" src="dist/main.js"></script>
+</body>
+</html>
