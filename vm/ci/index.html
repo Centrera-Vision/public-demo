@@ -508,26 +508,55 @@
     <div class="container">
       <div class="reveal section-center">
         <h2 class="section-title">Vad händer under huven?</h2>
-        <p class="section-subtitle">Cloud-init körs automatiskt vid första start och sätter upp hela miljön utan manuell inloggning.</p>
+        <p class="section-subtitle">Cloudflare hanterar DNS, TLS och DDoS-skydd globalt – trafiken når Apache på VM:en via Cloudflares CDN-nätverk.</p>
       </div>
       <div class="arch-box reveal">
+
+        <!-- Trafikflöde -->
+        <div class="arch-divider">Trafikflöde</div>
         <div class="arch-row">
           <div class="arch-node">
-            <span class="arch-icon">🖥️</span>
-            Centrera<br>Cloud Portal
+            <span class="arch-icon">🌐</span>
+            Besökare
           </div>
           <span class="arch-arrow">→</span>
           <div class="arch-node highlight">
-            <span class="arch-icon">☁️</span>
-            cloud-init<br>vid boot
+            <span class="arch-icon">🔶</span>
+            Cloudflare<br><small style="font-weight:500;opacity:0.85">DNS · TLS · CDN · DDoS</small>
           </div>
-          <span class="arch-arrow">→</span>
+          <span class="arch-arrow">→ port 80/443 →</span>
           <div class="arch-node">
-            <span class="arch-icon">🌐</span>
-            Apache<br>live på port 80
+            <span class="arch-icon">🖥️</span>
+            Apache<br><small style="font-weight:400;color:#5A6C7D">Centrera Cloud VM</small>
           </div>
         </div>
-        <div class="arch-divider">Automatisering</div>
+
+        <!-- Cloudflare-lager -->
+        <div class="arch-divider">Cloudflare-lager</div>
+        <div class="arch-row">
+          <div class="arch-node">
+            <span class="arch-icon">🔒</span>
+            TLS/SSL<br><small style="font-weight:400;color:#5A6C7D">HTTPS end-to-end</small>
+          </div>
+          <span class="arch-arrow">·</span>
+          <div class="arch-node">
+            <span class="arch-icon">🛡️</span>
+            DDoS-skydd<br><small style="font-weight:400;color:#5A6C7D">Layer 3/4/7</small>
+          </div>
+          <span class="arch-arrow">·</span>
+          <div class="arch-node">
+            <span class="arch-icon">⚡</span>
+            CDN-cache<br><small style="font-weight:400;color:#5A6C7D">Global edge</small>
+          </div>
+          <span class="arch-arrow">·</span>
+          <div class="arch-node">
+            <span class="arch-icon">🌍</span>
+            DNS<br><small style="font-weight:400;color:#5A6C7D">Anycast</small>
+          </div>
+        </div>
+
+        <!-- Provisioning -->
+        <div class="arch-divider">Provisionering vid boot</div>
         <div class="arch-row">
           <div class="arch-node">
             <span class="arch-icon">📦</span>
@@ -535,10 +564,16 @@
           </div>
           <span class="arch-arrow">→ klonas &amp; kopieras →</span>
           <div class="arch-node">
+            <span class="arch-icon">☁️</span>
+            cloud-init<br><small style="font-weight:400;color:#5A6C7D">vid första boot</small>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
             <span class="arch-icon">📂</span>
             /var/www/<br>html/
           </div>
         </div>
+
       </div>
     </div>
   </section>
