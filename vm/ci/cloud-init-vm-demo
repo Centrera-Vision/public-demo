@@ -1,0 +1,81 @@
+#cloud-config
+# ============================================================
+# Centrera Cloud Portal – VM Demo
+# Ändra KUND_NAMN på raden nedan innan du klistrar in
+# ============================================================
+
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    passwd: $6$p3gYAWjYoPliNIFX$ud4W8/SFCCOD/2tBaRWqr1SHavNGNlEdm1eRTzmU8Fj5eEAc1KGbdd8r6AWep5LA7dppdMcceJ0b0S3MqhbMJ1
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQlsD61iC6TpdU95HlQFrjh2kVTfdkcl8BDEJsAOI1XoocrYqnvECHnh0K/rvN7hyLz4BJFjn12eZ0Eaox6eyc6j6GUD3SXF9uc/k23MSJvz91J/+DZgI9sZX/rufCZjb3jgyqGoYtcg4RB0DKJIwGx4IbtBY7qHHMVpaiPFc+LCZmBdJuCEO56GUzCDCkgQrgdSF9Wcysdd/KlajiFO6U4wvUrNFaw3h1OFCHqytB2P9sz4ZNxgiozEkFPhupci5IiHo5YIMBbR8izlbh/yqipy5T9maqLTTDk3NIxsrbb/OHkuHiXBNM4dK1KalKZxqTvJSB1b8CUtwOxKb4G03d
+
+package_update: true
+package_upgrade: true
+packages:
+  - curl
+  - git
+  - vim
+  - htop
+  - ufw
+  - apache2
+
+write_files:
+  - path: /etc/motd
+    content: |
+      Välkommen till Centrera Cloud Portal VM-demo!
+      Provisionerad med cloud-init.
+    permissions: '0644'
+
+  - path: /etc/default/ufw
+    content: |
+      IPV6=yes
+      DEFAULT_INPUT_POLICY="DROP"
+      DEFAULT_OUTPUT_POLICY="ACCEPT"
+      DEFAULT_FORWARD_POLICY="ACCEPT"
+      DEFAULT_APPLICATION_POLICY="SKIP"
+      MANAGE_BUILTINS=no
+      IPT_SYSCTL=/etc/ufw/sysctl.conf
+      IPT_MODULES=""
+    owner: root:root
+    permissions: '0644'
+
+runcmd:
+  - echo "VM provisionerad av cloud-init" >> /var/log/cloud-init-custom.log
+  - timedatectl set-timezone Europe/Stockholm
+
+  # ── Ändra kundnamn här ───────────────────────────────────
+  - KUND_NAMN="Kund X"
+  # ────────────────────────────────────────────────────────
+
+  # Aktivera IP forwarding
+  - sysctl -w net.ipv4.ip_forward=1
+  - echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+
+  # Aktivera och starta Apache
+  - systemctl enable apache2
+  - systemctl start apache2
+  - echo "Apache startad" >> /var/log/cloud-init-custom.log
+
+  # Klona repot
+  - git clone https://github.com/Centrera-Vision/public-demo.git /opt/public-demo
+  - echo "Repo klonat" >> /var/log/cloud-init-custom.log
+
+  # Kopiera index.html från vm/ci/ till webbroot och ersätt KUND_NAMN
+  - cp /opt/public-demo/vm/ci/index.html /var/www/html/index.html
+  - sed -i "s|KUND_NAMN|${KUND_NAMN}|g" /var/www/html/index.html
+  - chown www-data:www-data /var/www/html/index.html
+  - echo "index.html driftsatt för ${KUND_NAMN}" >> /var/log/cloud-init-custom.log
+
+  # Konfigurera UFW
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+  - echo "UFW konfigurerat" >> /var/log/cloud-init-custom.log
