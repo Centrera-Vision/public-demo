@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VM-demo för KUND_NAMN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1A1A1A;
+      background: #FFFFFF;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    :root {
+      --orange: #E8572A;
+      --red: #E8184A;
+      --magenta: #D4167A;
+      --gradient: linear-gradient(135deg, #E8572A, #E8184A, #D4167A);
+      --gradient-h: linear-gradient(90deg, #E8572A, #E8184A, #D4167A);
+      --bg: #FFFFFF;
+      --bg-light: #F8F9FA;
+      --text: #1A1A1A;
+      --text-secondary: #5A6C7D;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.10);
+      --max-w: 1100px;
+      --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    .gradient-text {
+      background: var(--gradient-h);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      background: var(--gradient);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 15% 85%, rgba(255,255,255,0.10) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.07) 0%, transparent 45%);
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      animation: float 8s ease-in-out infinite;
+    }
+    .blob-1 { width: 420px; height: 420px; top: -80px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 280px; height: 280px; bottom: -60px; right: -60px; animation-delay: 3s; }
+    .blob-3 { width: 180px; height: 180px; top: 40%; right: 10%; animation-delay: 5s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50%       { transform: translateY(-24px) scale(1.04); }
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 780px;
+      padding: 40px 24px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+    .hero-badge .dot {
+      width: 8px; height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(1.3); }
+    }
+    .hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: rgba(255,255,255,0.82);
+      max-width: 560px;
+      margin: 0 auto 40px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--orange);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .btn-white:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.22); transform: translateY(-2px); }
+    .btn-outline-white {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.12); }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--bg-light);
+      padding: 40px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: var(--gradient-h);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* SECTION */
+    .section { padding: 100px 0; }
+    .section-light { background: var(--bg-light); }
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 56px;
+    }
+    .section-center { text-align: center; }
+    .section-center .section-subtitle { margin-left: auto; margin-right: auto; }
+
+    /* CARDS grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: var(--transition);
+    }
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* Portal step block */
+    .portal-block {
+      background: #0F1419;
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gradient-h);
+    }
+    .portal-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #5A6C7D;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .portal-block code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.92rem;
+      color: #E2E8F0;
+      line-height: 1.9;
+      display: block;
+    }
+    .portal-block code .key   { color: #93C5FD; }
+    .portal-block code .value { color: #86EFAC; }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 24px;
+      position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 27px; top: 56px;
+      bottom: -24px;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(232,87,42,0.3), rgba(212,22,122,0.1));
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(232,87,42,0.35);
+    }
+    .step-body {
+      padding: 8px 0 40px;
+    }
+    .step-body h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .step-body p {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    /* Architecture diagram */
+    .arch-box {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .arch-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-light);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      min-width: 100px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .arch-node:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .arch-node .arch-icon { font-size: 1.6rem; }
+    .arch-node.highlight {
+      background: var(--gradient);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 6px 24px rgba(232,87,42,0.35);
+    }
+    .arch-arrow {
+      font-size: 1.4rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+    .arch-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .arch-divider::before, .arch-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0,0,0,0.08);
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--gradient);
+      padding: 80px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    }
+    .cta-section h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.1rem;
+      position: relative;
+      margin-bottom: 36px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 24px; }
+    .logo svg { width: 40px; height: 40px; stroke: rgba(255,255,255,0.9); }
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: #fff;
+    }
+    .footer-logo svg { width: 28px; height: 28px; stroke: var(--orange); }
+    .footer-logo .logo-text { color: rgba(255,255,255,0.8); font-size: 1.1rem; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .footer {
+      background: #0F1419;
+      color: rgba(255,255,255,0.6);
+      padding: 40px 0;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+    .footer span { color: var(--orange); }
+
+    @media (max-width: 640px) {
+      .hero-actions { flex-direction: column; align-items: center; }
+      .arch-row { gap: 8px; }
+      .arch-node { min-width: 80px; padding: 12px 14px; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-content">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+        </svg>
+        <span class="logo-text">CENTRERA</span>
+      </div>
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Live · VM-demo för KUND_NAMN
+      </div>
+      <h1>Välkommen till<br>VM-demo för KUND_NAMN</h1>
+      <p>Den här sidan serveras av Apache på en VM skapad i Centrera Cloud Portal – provisionerad automatiskt med cloud-init på under en minut.</p>
+      <div class="hero-actions">
+        <a href="#how-it-works" class="btn btn-white">Hur det fungerar ↓</a>
+        <a href="#steps" class="btn btn-outline-white">Se stegen</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">6</div>
+          <div class="stat-label">steg i portalen</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">&lt;1</div>
+          <div class="stat-label">minut till live VM</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1</div>
+          <div class="stat-label">cloud-init fil</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">∞</div>
+          <div class="stat-label">möjligheter</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="reveal section-center">
+        <h2 class="section-title">Vad händer under huven?</h2>
+        <p class="section-subtitle">Cloud-init körs automatiskt vid första start och sätter upp hela miljön utan manuell inloggning.</p>
+      </div>
+      <div class="arch-box reveal">
+        <div class="arch-row">
+          <div class="arch-node">
+            <span class="arch-icon">🖥️</span>
+            Centrera<br>Cloud Portal
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node highlight">
+            <span class="arch-icon">☁️</span>
+            cloud-init<br>vid boot
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
+            <span class="arch-icon">🌐</span>
+            Apache<br>live på port 80
+          </div>
+        </div>
+        <div class="arch-divider">Automatisering</div>
+        <div class="arch-row">
+          <div class="arch-node">
+            <span class="arch-icon">📦</span>
+            Git-repo<br><small style="font-weight:400;color:#5A6C7D">public-demo</small>
+          </div>
+          <span class="arch-arrow">→ klonas &amp; kopieras →</span>
+          <div class="arch-node">
+            <span class="arch-icon">📂</span>
+            /var/www/<br>html/
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="section section-light" id="steps">
+    <div class="container">
+      <div class="reveal">
+        <h2 class="section-title">Steg-för-steg</h2>
+        <p class="section-subtitle">Sex steg från noll till en live VM i Centrera Cloud Portal.</p>
+      </div>
+      <div class="steps reveal">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Grundläggande – välj namn</h3>
+            <p>Ge din virtuella server ett namn som identifierar den i portalen.</p>
+            <div class="portal-block">
+              <div class="portal-label">Centrera Cloud Portal</div>
+              <code><span class="key">Namn:</span> <span class="value">min-demo-vm</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Operativsystem – välj OS</h3>
+            <p>Välj vilket operativsystem din VM ska köra. Ubuntu LTS rekommenderas för cloud-init-kompatibilitet.</p>
+            <div class="portal-block">
+              <div class="portal-label">Centrera Cloud Portal</div>
+              <code><span class="key">OS:</span> <span class="value">Ubuntu 22.04 LTS</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Storlek – välj resurser</h3>
+            <p>Dimensionera CPU och RAM efter behov. En liten flavor räcker för en webbdemo.</p>
+            <div class="portal-block">
+              <div class="portal-label">Centrera Cloud Portal</div>
+              <code><span class="key">Flavor:</span> <span class="value">m1.small (2 vCPU / 4 GB RAM)</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Nätverk – välj subnät</h3>
+            <p>Koppla VM:en till rätt nätverk och subnät för att få en IP-adress.</p>
+            <div class="portal-block">
+              <div class="portal-label">Centrera Cloud Portal</div>
+              <code><span class="key">Subnät:</span> <span class="value">demo-network / 10.0.0.0/24</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>Anpassning – klistra in cloud-init</h3>
+            <p>Klistra in cloud-init-konfigurationen. Den installerar Apache, klonar repot och anpassar sidan med kundnamn – helt automatiskt vid första start.</p>
+            <div class="portal-block">
+              <div class="portal-label">User Data / cloud-init</div>
+              <code><span class="key">#cloud-config</span><br>
+<span class="key">packages:</span> <span class="value">[apache2, git, ufw]</span><br>
+<span class="key">runcmd:</span><br>
+&nbsp;&nbsp;<span class="value">- git clone https://github.com/...</span><br>
+&nbsp;&nbsp;<span class="value">- cp vm/ci/index.html /var/www/html/</span><br>
+&nbsp;&nbsp;<span class="value">- sed -i 's/KUND_NAMN/Kund X/' /var/www/html/index.html</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h3>Säkerhet – SSH-nyckel</h3>
+            <p>Välj eller klistra in din publika SSH-nyckel. VM:en är nu redo – starta den och sidan är live inom en minut!</p>
+            <div class="portal-block">
+              <div class="portal-label">Centrera Cloud Portal</div>
+              <code><span class="key">SSH-nyckel:</span> <span class="value">ssh-rsa AAAA... din@nyckel</span></code>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="section">
+    <div class="container">
+      <div class="reveal section-center">
+        <h2 class="section-title">Varför cloud-init?</h2>
+        <p class="section-subtitle">Det enklaste sättet att automatisera en VM från dag ett – utan manuell konfiguration.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card reveal">
+          <div class="card-icon">⚡</div>
+          <h3>Snabb uppstart</h3>
+          <p>Hela miljön – paket, brandvägg, webbserver och innehåll – är redo på under en minut utan att du behöver logga in.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🔁</div>
+          <h3>Repeterbar</h3>
+          <p>Samma cloud-init-fil ger exakt samma resultat varje gång. Perfekt för demo-miljöer och kundpresentationer.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🎨</div>
+          <h3>Kundanpassad</h3>
+          <p>Byt ett enda värde i filen – <code>KUND_NAMN</code> – och sidan anpassas automatiskt för rätt kund.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🔒</div>
+          <h3>Säker från start</h3>
+          <p>UFW-brandväggen konfigureras automatiskt: port 22, 80 och 443 öppna – allt annat blockerat.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Redo att prova själv?</h2>
+      <p>Skapa din egna VM i Centrera Cloud Portal på några minuter.</p>
+      <a href="#steps" class="btn btn-white">Se stegen igen ↑</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="logo footer-logo" style="margin-bottom:12px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+        </svg>
+        <span class="logo-text">CENTRERA</span>
+      </div>
+      VM-demo för <span>KUND_NAMN</span> · Serveras av <span>Apache</span> på en Centrera Cloud VM · Provisionerad med cloud-init
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const els = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function(el) { obs.observe(el); });
+      } else {
+        els.forEach(function(el) { el.classList.add('visible'); });
+      }
+    })();
+  </script>
+</body>
+</html>
