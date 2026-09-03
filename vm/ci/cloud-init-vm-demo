@@ -70,6 +70,9 @@ runcmd:
   - sed -i "s|KUND_NAMN|${KUND_NAMN}|g" /var/www/html/index.html
   - chown www-data:www-data /var/www/html/index.html
   - echo "index.html driftsatt för ${KUND_NAMN}" >> /var/log/cloud-init-custom.log
+  
+  # Starta om apache2 
+  - systemctl restart apache2
 
   # Konfigurera UFW
   - ufw default deny incoming
